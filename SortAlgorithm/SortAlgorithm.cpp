@@ -42,7 +42,7 @@ int main() {
 
     // 生成 1000 个随机数并存储在向量中
     std::vector<int> numbers;
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 10; ++i) {
         numbers.push_back(std::rand() % 100); // 生成范围在 0 到 9999 的随机数
     }
 
@@ -56,7 +56,9 @@ int main() {
     }
     std::cout << std::endl;
 
-    InsertSort(numbers.data(), numbers.size());
+    //InsertSort(numbers.data(), numbers.size());
+
+    ShellSort(numbers.data(), numbers.size());
 
     std::cout << "ordered numbers:" << std::endl;
     for (int num : numbers) {
@@ -72,17 +74,53 @@ int main() {
 void InsertSort(int* a, const int& n)
 {
     assert(a);
-    for (int i = 1; i < n; ++i)
+    for (int i = 0; i < n - 1; i++)
+        //注意：最后一个要插入数据的下标为n-1，此次插入有序数列的end下标为n-2
     {
-        int cur = *(a + i);
-        for (int j = i - 1; j >= 0; j--)
+        int end = i;//标记当前有序数列的最后一个位置下标
+        int x = a[end + 1];//要插入的数据为有序数列的后一个位置
+
+        while (end >= 0)//进行当前趟次的插入排列
         {
-            //和前面的每个值进行比较,如果比他小就插入
-            if (cur < *(a + j))
+            //升序
+            if (a[end] > x)//有序数列的数据比插入数据大，则往后挪动
             {
-                *(a + j + 1) = *(a + j);
-                *(a + j) = cur;
+                a[end + 1] = a[end];
+                end--;//向前找，进行排列数据
+            }
+            else//遇到不大于要插入数据，则不再往前找
+            {
+                break;
             }
         }
+        a[end + 1] = x;//将要插入数据插入到不大于该数据的后一个位置
     }
+}
+
+void ShellSort(int* a, const int& n)
+{
+    int gap = n;
+    while (gap > 1)
+    {
+        gap /= 2;//保证最后一次分组gap==1,即最后一次为直接插入排序
+        //gap = gap / 3 + 1;//也可以写成这样，除3预排的效率相比于除2的好点
+        for (int i = 0; i < n - gap; i++)
+        {
+            int end = i;
+            int x = a[end + gap];
+            while (end >= 0)
+            {
+                if (a[end] > x)
+                {
+                    a[end + gap] = a[end];
+                    end -= gap;
+                }
+                else
+                    break;
+            }
+            a[end + gap] = x;
+        }
+    }
+
+
 }
