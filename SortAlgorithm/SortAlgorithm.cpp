@@ -58,7 +58,11 @@ int main() {
 
     //InsertSort(numbers.data(), numbers.size());
 
-    ShellSort(numbers.data(), numbers.size());
+    //ShellSort(numbers.data(), numbers.size());
+
+    //SelectSort(numbers.data(), numbers.size());
+
+    HeapSort(numbers.data(), numbers.size());
 
     std::cout << "ordered numbers:" << std::endl;
     for (int num : numbers) {
@@ -121,6 +125,77 @@ void ShellSort(int* a, const int& n)
             a[end + gap] = x;
         }
     }
-
-
 }
+
+void SelectSort(int* a, const int& n)
+{
+    assert(a);
+    for (int i = 0; i < n; ++i)
+    {
+
+        int minIndex = i;
+        for (int j = i + 1; j < n; ++j)
+        {
+            
+            if (*(a + j) < *(a + minIndex))
+            {
+                minIndex = j;
+            }
+        }
+
+        int temp = *(a + minIndex);
+        *(a + minIndex) = *(a + i);
+        *(a + i) = temp;
+    }
+}
+
+void AdjustDwon(int* a, const int& end, int start)
+{
+
+    //create father node
+    int dad = start;
+
+    //create child node
+    int child = 2 * dad + 1;
+    
+    //if the child node is in the range of heap
+    while (child <= end)
+    {
+        //compare the two child node and get the bigger one
+        if (child + 1 <= end && a[child] < a[child + 1])
+            child++;
+
+        //if value of father node is bigger than child node, jump out the loop
+        if (a[dad] > a[child])
+            return;
+        else
+        {
+            //change the value of father and son
+            std::swap(a[dad], a[child]);
+
+            //get the next father and son node
+            int dad = child;
+            child = 2 * dad + 1;
+        }
+    }
+}
+
+void HeapSort(int* a, const int& n)
+{
+    assert(a);
+
+    //initialize the heap,begin at the last father node
+    for (int i = n / 2 - 1; i >= 0; --i)
+    {
+        AdjustDwon(a, n - 1, i);
+    }
+
+    //½»»»µ÷Õû
+    for (int i = n - 1; i > 0; --i)
+    {
+        std::swap(a[0], a[i]);
+        //do the change in the remaining heap
+        AdjustDwon(a, i - 1, 0);
+    }
+}
+
